@@ -36,4 +36,4 @@ H2 UI : http://localhost:8080/h2-console
 ## My Java Experiance
 - I'm a beginner and just recently learning Spring Boot
 - I'm from Angular and nodeJS background but I have also spent a year in fixing bugs in spring boot app.
-- My recent hobby is flutter (I spend 50 hours a monthon it)
+- My recent hobby is flutter (I spend 50 hours a month on it)
