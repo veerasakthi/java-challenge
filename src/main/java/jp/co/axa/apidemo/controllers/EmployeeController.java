@@ -1,9 +1,13 @@
 package jp.co.axa.apidemo.controllers;
 
+import jp.co.axa.apidemo.common.ResponseUtils;
 import jp.co.axa.apidemo.common.UriConstants;
 import jp.co.axa.apidemo.entities.Employee;
+import jp.co.axa.apidemo.model.Response;
 import jp.co.axa.apidemo.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,42 +21,68 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
 	@GetMapping(UriConstants.GET_ALL_EMPLOYEES)
-	public List<Employee> getEmployees() {
+	public ResponseEntity<Response<List<Employee>>> getEmployees() {
+
+		// get employee list from db
 		List<Employee> employees = employeeService.retrieveEmployees();
-		return employees;
+
+		return ResponseUtils.success(employees);
 	}
 
+	/**
+	 * Used to get Employee by id
+	 * 
+	 * @param employeeId
+	 * @return employee
+	 */
 	@GetMapping(UriConstants.GET_EMPLOYEE_BY_ID)
-	public Employee getEmployee(@PathVariable(name = "employeeId") Long employeeId) {
-		return employeeService.getEmployee(employeeId);
+	public ResponseEntity<Response<Employee>> getEmployee(@PathVariable(name = "employeeId") Long employeeId) {
+
+		// get employee details
+		Employee employee = employeeService.getEmployee(employeeId);
+
+		return ResponseUtils.success(employee);
 	}
 
 	@PostMapping(UriConstants.SAVE_EMPLOYEE)
-	public void saveEmployee(@Valid @RequestBody Employee employee) {
+	public ResponseEntity<Response<Boolean>> saveEmployee(@Valid @RequestBody Employee employee) {
 
+		// save employee to db
 		employeeService.saveEmployee(employee);
 		System.out.println("Employee Saved Successfully");
+
+		return ResponseUtils.success(true);
 	}
 
 	@DeleteMapping(UriConstants.DELETE_EMPLOYEE_BY_ID)
-	public void deleteEmployee(@PathVariable(name = "employeeId") Long employeeId) {
+	public ResponseEntity<Response<Boolean>> deleteEmployee(@PathVariable(name = "employeeId") Long employeeId) {
+
+		// delete emp from db
 		employeeService.deleteEmployee(employeeId);
 		System.out.println("Employee Deleted Successfully");
+
+		return ResponseUtils.success(true);
 	}
-
+	
 	@PutMapping(UriConstants.UPDATE_EMPLOYEE_BY_ID)
-	public void updateEmployee(@RequestBody Employee employee, @PathVariable(name = "employeeId") Long employeeId) {
+	public ResponseEntity<Response<String>> updateEmployee(@RequestBody Employee employee) {
 		// check if employee exist or not
-		Employee existingEmp = employeeService.getEmployee(employeeId);
+		Employee existingEmp = employeeService.getEmployee(employee.getId());
 
-		if (existingEmp != null) {
-			// update the employee
-			employeeService.updateEmployee(employee);
+		if (existingEmp == null) {
+			// return employee not exist error message
+			return ResponseUtils.error("Employee is not found for given employeeId: "+ employee.getId(), HttpStatus.BAD_REQUEST);
 		}
 
-		// return employee not exist error message
-
+		// update the employee
+		employeeService.updateEmployee(employee);
+		return ResponseUtils.success("Employee updated successfully");
 	}
 
 }
