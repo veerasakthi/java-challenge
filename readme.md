@@ -18,13 +18,13 @@ Java challenge written in spring boot with the embedded H2 database.
 
 ## Run Locally
 
-Clone the project
+swagger API documentation
 
 ```bash
 Swagger UI : http://localhost:8080/swagger-ui.html
 ```
 
-Install dependencies
+h2 database console
 ```bash
 H2 UI : http://localhost:8080/h2-console
 ```
